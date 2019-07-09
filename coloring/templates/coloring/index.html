@@ -59,14 +59,61 @@
 			// you may also add code outside of the function (e.g., global variables)
 			function myGradientInteraction(){
 				var tool = new paper.Tool();
+        
+        let rectangle = new paper.Path();
+        
+        let x = 260;
+        let y = 410;
+        let length = 200;
+        let width = 100;
+        
+        rectangle.add(new paper.Point(x,y));
+        rectangle.add(new paper.Point(x + length,y));
+        
+        rectangle.add(new paper.Point(x + length,y - width));
+        rectangle.add(new paper.Point(x,y - width));
+        
+        rectangle.closed = true;
+        
+        rectangle.fillColor = 'red';
+        
+        rectangle.view.draw();
+        
+        let startPoint = 0;
+        let endPoint = 0;
 
 				tool.onMouseDown = function (event) {
-
+          if ($.fn.checkXY(event.point)) {
+            startPoint = event.point;
+            console.log(cp.history);
+          }
 				}
 
 				tool.onMouseUp = function (event) {
-					
+					if ($.fn.checkXY(event.point)) {
+            let grad1Ind = cp.history.length - 2;
+            let grad2Ind = cp.history.length - 1;
+            endPoint = event.point;
+            rectangle.fillColor = {
+              gradient: {
+                stops: [cp.history[grad1Ind], cp.history[grad2Ind]]
+              },
+              origin: startPoint,
+              destination: endPoint
+            }
+          }
 				}
+        
+        $.fn.checkXY = function(point){ 
+          if (point.x > x && point.x < (x+length) && point.y < y && point.y > (y - width)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        
+        
+
 			}
 
 			// your custom interaction goes here!
