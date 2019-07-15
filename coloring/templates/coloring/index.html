@@ -66,6 +66,50 @@
 			margin: 9px;
 		}
     
+    .bg-1 {
+      background-color: #fefe30;
+    }
+    
+    .bg-2 {
+      background-color: #fb9a00;
+    }
+    
+    .bg-3 {
+      background-color: #fd5202;
+    }
+    
+    .bg-4 {
+      background-color: #fe230a;
+    }
+    
+    .bg-5 {
+      background-color: #a81249;
+    }
+    
+    .bg-6 {
+      background-color: #8700b1;
+    }
+    
+    .bg-7 {
+      background-color: #3b00a5;
+    }
+    
+    .bg-8 {
+      background-color: #0045fe;
+    }
+    
+    .bg-9 {
+      background-color: #0093cf;
+    }
+    
+    .bg-10 {
+      background-color: #66b22f;
+    }
+    
+    .bg-11 {
+      background-color: #d1eb27;
+    }
+   
     #shadow-box {
       height:100%;
       width: 96%;
@@ -79,6 +123,16 @@
       position: relative;
     }
     
+    .popover {
+      border: 0px;
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.10);
+    }
+    
+    .bs-popover-auto[x-placement^=top]>.arrow::before, .bs-popover-top>.arrow::before {
+      border: 0px;
+      box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.10);
+    }
+    
     
     #autofill-btn {
       vertical-align: middle;
@@ -88,6 +142,26 @@
       top: 70%;
     }
     
+    a {
+      background-color: #d8d8d8;
+      color: #000;
+
+    }
+    
+    .nav-link.autotab {
+      box-shadow: inset 7px 0px 3px -3px #909090;
+    }
+    
+    .nav-link.active.autotab {
+      box-shadow: -7px 0px 3px -3px #909090;
+    }
+    
+    .nav-link.active.painttab {
+      box-shadow: 7px 0px 3px -3px #909090;
+    }
+    
+
+    
     .lock-btn {
       margin-right:4px;
       margin-left: 10px;
@@ -96,7 +170,6 @@
     }
     
 
-    
     .locking {
       vertical-align: middle;
       position: absolute;
@@ -111,7 +184,6 @@
       padding-top: 4px;
       color: #fff;
       top: 5px;
-
     }
     
     .instructions {
@@ -121,34 +193,52 @@
     .nav-tabs .nav-item {
       margin-bottom: -1px;
       width: 50%;
-
     }
     
     .nav-tabs .nav-link {
-      border: 1px solid transparent;
       border-top-left-radius: 0.50rem;
       border-top-right-radius: 0.50rem;
       font-size: 24px;
       vertical-align: middle;
       font-weight: 400;
+    }
+    
+    #nav-paint {
 
     }
+    
+    
     
     .nav-tabs .nav-link.active,
     .nav-tabs .nav-item.show .nav-link {
       color: #000;
       background-color: #efefef;
-      box-shadow: -7px 0px 3px -3px #909090;
+      
+      border-color: #efefef;
     }
     
-    .message {
+    #curr-color {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 90px;
+      background-color: #fefe30;
+      top: 18%;
+      left: 40%;
+
+    }
+    
+    .popup {
       display: none;
+/*       visibility: hidden; */
       position: absolute;
       text-align: center;
 /*       color: white; */
       background: white;
       border: 5px solid black;
       border-radius: 10px;
+/*       display: flex; */
+/*       flex-wrap: wrap; */
     }
    
     /*#color-palette {
@@ -176,6 +266,27 @@
 		window.onload = function() {
 			var canvas = document.getElementById('myCanvas');
       var colorsPicked = [];
+      var mode = "paint";
+      var currColor = "#fefe30";
+      var possibleColor =['254.254.48',
+                '250.190.0',
+                '251.154.0',
+                '253.82.2',
+                '254.35.10',
+                '168.18.73',
+                '135.0.177',
+                '59.0.165',
+                '0.69.254',
+                '0.147.207',
+                '102.178.47',
+                '209.235.39'];
+      
+      
+      
+      $('.autotab').on("click", function() {
+        mode = "autofill";
+        console.log("autofilllmode")
+      })
       
 
 			// coloring page
@@ -255,68 +366,80 @@
         
 
 			}
+      
+      $(function () {
+        $('[data-toggle="popover"]').popover()
+      })
+      
+      $('.popover-dismiss').popover({
+        trigger: 'focus'
+      })
 
 			// your custom interaction goes here!
 			// you may replace everything
 			function myCustomInteraction() {
          /// color changes randomly on selected area
-// 				var tool = new paper.Tool();
-// 				tool.onMouseDown = function (event) {
-// 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
-
-//             console.log("hit");
-//             console.log(hit);
-// 				    if (hit) {
-//                 console.log(colorsPicked);
-
-//                 var randColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
-
-// 				        hit.item.fillColor = randColor;
-// 				    }
-// 				}
-
-        
-        /// click area pop-up box
-        
-//         var tool = new paper.Tool();
-// 				tool.onMouseDown = function (event) {
-//         var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
-          
-//           if (hit){
-//             let rec = new paper.Path();
-//             let length = 40;
-//             let width = 28;
-//             let x = event.point.x;
-//             let y = event.point.y;
-
-//             rec.add(new paper.Point(x,y));
-//             rec.add(new paper.Point(x + length,y));
-
-//             rec.add(new paper.Point(x + length,y - width));
-//             rec.add(new paper.Point(x,y - width));
-
-//             rec.closed = true;
-
-//             rec.fillColor = 'white';
-//             rec.strokeColor = 'black';
-//           }
-// 			  }
-        
-        var tool = new paper.Tool();
+				var tool = new paper.Tool();
 				tool.onMouseDown = function (event) {
-        var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
-          if (hit){
-              $(function() {
-                $("#myCanvas").click(function(evt) {
-                  $(".message").css({
-                    top: evt.pageY + 5,
-                    left: evt.pageX + 5
-                  }).show();
-                });
-              });
+        var hit = mandala.item.hitTest(event.point, { tolerance: 1, fill: true });
+          
+				    if (hit) {       
+                
+                if (mode == "paint") {
+                console.log(mode);
+                $('.popup').css({
+                    "display": "none!important",
+                    "flex-wrap": "no-wrap"
+                })
+                
+				        hit.item.fillColor = currColor;
+              
+                hit.item.lock = true;
+				        } else {
+//                 console.log("we got here");
+                $("#myCanvas").click(function(event) {
+                    $('.popup').show();
+                    $('.popup').css({
+                        top: event.pageY + 3,
+                        left: event.pageX + 3,
+                        "display": "flex",
+                        "flex-wrap": "wrap"
+                    })
+                  
+                    $('.popUpClassColor').on("click", function() {
+                    var areaColor = $(this).css("background-color");
+                    if (typeof areaColor !== "undefined")
+                        console.log(hit.item);
+                        hit.item.fillColor = areaColor;
+                    })
+                    
+                    
+                    
+                    if (hit.item.lock == true){
+                        $('#popup-unlock-select').hide();
+                        $('#popup-lock-select').show();
+                    } else{
+                        $('#popup-lock-select').hide();
+                        $('#popup-unlock-select').show();
+                    }
+      
+                    $('#popup-lock-select').on("click", function() {
+                      hit.item.lock = false;
+                      $('#popup-unlock-select').show();
+                      $('#popup-lock-select').hide();
+                    })
+
+                    $('#popup-unlock-select').on("click", function() {
+                      hit.item.lock = true;
+                      $('#popup-unlock-select').hide();
+                      $('#popup-lock-select').show();
+                    })
+            })
+          }
+            }
         }
       }
-      }
+      
 
 
 			// create a color palette with the given colors
@@ -352,6 +475,15 @@
 
 				paper.project.importSVG(mandala.filePath, function(item) { 
 					mandala.item = item._children["design-freepik"];
+          //initiate lock
+          for (i = 0;  i < mandala.item.children.length; i++){
+              var currArea = mandala.item.children[i];
+	            if (typeof currArea.lock === 'undefined') {
+          	  currArea.lock = false;
+              }
+          }
+          
+//           console.log(mandala.item.lock);
 				    paper.project.insertLayer(0,mandala.item);
 
 				    if (custom) {
@@ -364,7 +496,7 @@
 			}
       
       //CREATE COLOR WHEEL IMAGE
-      var pickerCanvas = document.getElementById('picker');
+      var pickerCanvas = document.getElementById('autofill-picker');
       var pickerCTX = pickerCanvas.getContext('2d');
 
       var pickerImage = new Image();
@@ -373,6 +505,64 @@
       }
 
       pickerImage.src = '/static/coloring/images/colorwheel.png';
+      
+      
+      var paintPickerCanvas = document.getElementById('paint-picker');
+      var paintPickerCTX = paintPickerCanvas.getContext('2d');
+
+      var paintPickerImage = new Image();
+      paintPickerImage.onload = function () {
+          paintPickerCTX.drawImage(paintPickerImage, 20, 20, 200, 200); 
+      }
+      
+      paintPickerImage.src = '/static/coloring/images/colorwheel.png';
+      
+      
+      $('.painttab').on("click", function() {
+        mode = "paint";
+      })
+      
+      $('#paint-picker').on("click", function(e) { 
+              var canvasOffset = $(paintPickerCanvas).offset();
+              var canvasX = Math.floor(e.pageX - canvasOffset.left);
+              var canvasY = Math.floor(e.pageY - canvasOffset.top);
+
+
+              var imageData = paintPickerCTX.getImageData(canvasX, canvasY, 1, 1);
+              var pixel = imageData.data;
+
+              var r = pixel[0].toString();
+              var g = pixel[1].toString();
+              var b = pixel[2].toString();
+              var rgb = "rgb(" + r + ", " + g + ", " + b +");"
+              var rgbCheck = r + '.' + g + '.' + b;
+              var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+              var hexColor = '#' + ('0000' + dColor.toString(16)).substr(-6);
+              
+              if (jQuery.inArray(rgbCheck, possibleColor) != -1) {
+                currColor = hexColor;
+                $('#curr-color').css('background-color', rgb);
+                                
+       }})
+      
+
+//       function popUpColor() {
+// 				var tool = new paper.Tool();
+// 				tool.onMouseDown = function (event) {
+// 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
+// 				    if (hit) {
+//               console.log('hit')
+//                 $('.popUpClassColor').on("click", function() {
+//                   console.log("hellllo");
+//                   var areaColor = $(this).css("background-color");
+//                   console.log(areaColor);
+//                   if (typeof areaColor !== "undefined")
+//                       console.log(areaColor);
+//                       hit.item.fillColor = areaColor;
+//                 })
+// 				    }
+// 				}
+// 			}
       
       //HIDE BUTTONS
       $('#done-icon').hide();
@@ -398,20 +588,38 @@
         }
       }
       
+      
+      //TOOL BAR SIDE
       $('#unlock-select').hide();
       
-      $('#lock-select').on("click", function() {
+      $('#lock-select').on("click", function() { // unlock all select
         $('#lock-select').hide();
         $('#unlock-select').show();
+        
+        for (i = 0;  i < mandala.item.children.length; i++){
+              var currArea = mandala.item.children[i];
+	            if ((currArea.lock == true) || (typeof currArea.lock === 'underfined')) {
+          	      currArea.lock = false;
+              }
+              console.log("unlock all fxn: children " + i + "'s lock = " + currArea.lock);
+        }
+        
       })
     
       $('#unlock-select').on("click", function() {
         $('#unlock-select').hide();
         $('#lock-select').show();
+            
+        for (i = 0;  i < mandala.item.children.length; i++){
+              var currArea = mandala.item.children[i];
+	            if ((currArea.lock == false) || (typeof currArea.lock === 'underfined')) {
+          	      currArea.lock = true;
+              }
+              console.log("lock all fxn: children " + i + "'s lock = " + currArea.lock);
+          }
       })
-    
-    
       
+  
       //WHEN EDIT BUTTON IS CLICKED
       $('#edit-icon').on("click", function() {
         
@@ -445,7 +653,7 @@
                 '209.235.39'];
 
             //got help from https://dzone.com/articles/creating-your-own-html5?fbclid=IwAR1T7DdJ3BDpROB3-KNqg0k4vLJj7XHLZvf3AOvmvSmDNMc9mVjCmrM2ofQ
-            $('#picker').on("click", function(e) { 
+            $('#autofill-picker').on("click", function(e) { 
               var canvasOffset = $(pickerCanvas).offset();
               var canvasX = Math.floor(e.pageX - canvasOffset.left);
               var canvasY = Math.floor(e.pageY - canvasOffset.top);
@@ -514,6 +722,9 @@
 
       })
       
+      $('#popup-done-btn').click(function(){
+        $('.popup').hide()
+      })
 //       //AUTOFILLING HOPEFULLY THIS WORKS AH
 //       $('#autofill-btn').click(function() {
 //         var notColoredSpaces = paper.project.getItems({ // gives an []
@@ -534,10 +745,10 @@
       $('#autofill-btn').click(function() {
         var notColoredSpaces = mandala.item
 
-         console.log(notColoredSpaces.children[0]);
+//          console.log(notColoredSpaces.children[0]);
 
 //         console.log(notColoredSpaces.children[0]);
-        //notColoredSpaces.children[0].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+//         notColoredSpaces.children[0].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
         //console.log("length of array = " + notColoredSpaces.length);
         for (i = 0;  i < notColoredSpaces.children.length; i++){
           //notColoredSpaces[i].fillColor = "#000000";
@@ -545,9 +756,15 @@
 //           console.log(notColoredSpaces.children[i].fillColor);
 //           notColoredSpaces.children[i].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
           var currArea = notColoredSpaces.children[i];
-          
-          if (currArea.fillColor._canvasStyle == 'rgb(255,255,255)'){
-//                       console.log(currArea.fillColor._canvasStyle);
+//           console.log("currArea.lock " + currArea.lock);
+//           if (typeof currArea.lock === 'undefined') {
+//             currArea.lock = false;
+// //             console.log("lock " + currArea.lock);
+//           }
+//            console.log("currArea.lock 2 " + currArea.lock);
+          if (currArea.lock == false) {
+//             console.log(currArea.fillColor._canvasStyle);
+//             console.log("lock " + currArea.lock);
             currArea.fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
           }
         }
@@ -578,20 +795,24 @@
 			} else {
 				init(true);
 			}
-      
+    
+ 		} 
+
+//           $('#appTabs a[href="#autofill"]').tab('show');
       
 //       $('#appTabs a[href="#paint"]').on('click', function(e){
 //         e.preventDefault();
 //         $(this).tab('show')
 //       })
-
+      
 //       $('#appTabs a[href="#autofill"]').on('click', function(e){
 //         e.preventDefault();
 //         $(this).tab('show')
 //       })
-
-//       $('#appTabs a:first').tab('show');
- 		} 
+    
+    $(function () {
+        $('#appTabs li:first-child a').tab('show')
+    })
     
 
 	</script>
@@ -605,7 +826,24 @@
       <div class="col-sm-9" >
         <div id="image-side" style="padding-top: 100px; padding-left: 10px;">
           <canvas id="myCanvas" width="750px" height="750px"></canvas>
-          <div class="message">a message for you</div>
+          <div class="popup">
+            <div class = "color-circle popUpClassColor bg-1"></div>
+            <div class = "color-circle popUpClassColor bg-2"></div>
+            <div class = "color-circle popUpClassColor bg-3"></div>
+            <div class = "color-circle popUpClassColor bg-4"></div>
+            <div class = "color-circle popUpClassColor bg-5"></div>
+            <div class = "color-circle popUpClassColor bg-6"></div>
+            <div class = "color-circle popUpClassColor bg-7"></div>
+            <div class = "color-circle popUpClassColor bg-8"></div>
+            <div class = "color-circle popUpClassColor bg-9"></div>
+            <div class = "color-circle popUpClassColor bg-10"></div>
+            <div class = "color-circle popUpClassColor bg-11"></div>
+            <img class="lock-btn" id="popup-lock-select" src='/static/coloring/images/lock-select.png' style="height:40px; margin-top: 7px; margin-right:3px; " >
+            <img class="lock-btn" id="popup-unlock-select" src='/static/coloring/images/unlock-select.png' style="height:40px; margin-top: 7px; margin-right:3px">
+            <button type="button" class="btn btn-secondary" id="popup-done-btn">
+              done
+            </button>
+          </div>
         </div>
       </div>
       
@@ -617,13 +855,13 @@
           <ul class="nav nav-tabs" id="appTabs" role="tablist">
               <!----- PAINT TAB ------>
               <li class="nav-item">
-                <a class="nav-link" id="nav-paint" data-toggle="tab" 
+                <a class="nav-link painttab" id="nav-paint" data-toggle="tab" 
                    href="#paint" role="tab" aria-controls="paint" aria-selected="false" 
-                   style="color: #000; background-color:#d8d8d8">PAINT</a>
+                   style="box-shadow: 7px 0px 3px -3px #909090;">PAINT</a>
               </li>
               <!------- AUTOFILL TAB ----->
               <li class="nav-item">
-                <a class="nav-link active" id="nav-autofill" data-toggle="tab" 
+                <a class="nav-link active autotab" id="nav-autofill" data-toggle="tab" 
                    href="#autofill" role="tab" aria-controls="autofill" aria-selected="true">AUTOFILL</a>
               </li>
           </ul>
@@ -635,15 +873,20 @@
           <!--      PAINT CONTENT      -->
           <div class = "tab-pane fade" id="paint" role="tabpanel" aria-labelledby="paint">
             <br>
-            paint...
+            <div id="curr-color"></div>
+
+            <div class="colorpicker" >
+                <canvas id="paint-picker" width="244.75" height="255"></canvas>
+            </div>
+
           </div>
           
           <!----------- AUTOFILL CONTENT ---------->
-          <div class = "tab-pane fade show active" role="tabpanel" aria-labelledby="autofill">
+          <div class = "tab-pane fade show active" id="autofill" role="tabpanel" aria-labelledby="autofill">
             <br>
               <!------------CHOOSING COLOR THINGS -------->
               <div class="colorpicker z-high" >
-                <canvas id="picker" width="244.75" height="255"></canvas>
+                <canvas id="autofill-picker" width="244.75" height="255"></canvas>
               </div>
               <div class="z-high">
               <!--         *** make this as scroller         -->
@@ -696,12 +939,9 @@
               <div class="locking">
                 <img class="lock-btn" id="lock-select" src='/static/coloring/images/lock-select.png' style="height:60px; margin-left:3px; margin-bottom:50px;">
                 <img class="lock-btn" id="unlock-select" src='/static/coloring/images/unlock-select.png' style="height:60px; margin-left:3px; margin-bottom:50px;">
-                 
-                <img src='/static/coloring/images/info-icon.png' style="height:15px; margin-left:0px; margin-bottom:100px;">
-           
-                  
-              </div>
-            
+                <img data-content="Everything colored is locked. To unlock all colored regions, toggle this lock icon. To unlock specific regions, click the region and toggle unlock." 
+                     data-placement="top" data-toggle="popover" data-trigger="hover" src='/static/coloring/images/info-icon.png' style="height:15px; margin-left:0px; margin-bottom:100px;">
+              </div>        
             
             </div>
 
