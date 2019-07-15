@@ -7,10 +7,105 @@
   	<title>P3 Coloring</title>
 
 	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'coloring/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static 'coloring/vendors/bootstrap/css/bootstrap.css' %}" />
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700&display=swap" rel="stylesheet">
+
 
 	<style type="text/css">
-		#color-palette {
+    
+    html, body {
+      height: 100%;
+    }
+    
+    body {
+      font-family: 'Raleway', sans-serif;
+    }
+    
+    #myCanvas {
+			  padding-left: 0;
+		    padding-right: 0;
+		    margin-left: auto;
+		    margin-right: auto;
+		    display: block;
+		}
+    
+    #image-side {
+      height: 100%;
+    }
+    
+    #nav-tabContent {
+      background-color: #EFEFEF;
+      height: 100%;
+      box-shadow: -3px 10px 10px rgba(0, 0, 0, 0.19);
+      border-radius: 5px 0px 0px 0px;
+      z-index: 100;
+    }
+    
+    .colors-picked {
+      display: flex;
+      flex-wrap: wrap;
+      width: 80%;
+      padding-left: 10%;
+      padding-right: 10%;
+      margin: auto;
+    }
+
+    .color-circle {
+			width: 30px;
+			height: 30px;
+			-moz-border-radius: 20px;
+			-webkit-border-radius: 20px;
+			border-radius: 20px;
+			margin: 9px;
+		}
+    
+    #shadow-box {
+      height:100%;
+      width: 96%;
+      background-color: rgb(0,0,0,0.4);
+      position: absolute;
+      z-index: 7;
+    }
+    
+    .z-high {
+      z-index: 100;
+      position: relative;
+    }
+    
+    
+    #autofill-btn {
+      vertical-align: middle;
+      font-size: 24px;
+      position: absolute;
+      left: 27%;
+      top: 60%;
+    }
+    
+    .locking {
+      vertical-align: middle;
+      position: absolute;
+      left: 47%;
+      top: 70%;
+      height: 50px;
+    }
+    
+    .delete {
+      vertical-align: middle;
+      display: inline-block;
+      padding-top: 4px;
+      color: #fff;
+      top: 5px;
+
+    }
+    
+    .instructions {
+      opacity: 0.5;
+    }
+   
+    /*#color-palette {
 			width: 300px;
 			background-color: #f1f1f1;
 			display: flex;
@@ -18,28 +113,24 @@
 			position: absolute;
 			top: 0;
 		}
-
-		.swatch {
-			width: 24px;
-			height: 24px;
+    
+   	.swatch {
+			width: 25px;
+			height: 25px;
 			-moz-border-radius: 12px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
-			margin: 3px;
-		}
-
-		#myCanvas {
-			padding-left: 0;
-		    padding-right: 0;
-		    margin-left: auto;
-		    margin-right: auto;
-		    display: block;
-		}
+			margin: 5px;
+		}*/
+    
+    
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
 		window.onload = function() {
 			var canvas = document.getElementById('myCanvas');
+      var colorsPicked = [];
+      
 
 			// coloring page
 			var mandala = {
@@ -54,6 +145,8 @@
 				options: [],
 				$container: $('#color-palette')
 			}
+      
+
 
 			// your rectangle gradient interaction goes in this function
 			// you may also add code outside of the function (e.g., global variables)
@@ -85,7 +178,7 @@
 				tool.onMouseDown = function (event) {
           if ($.fn.checkXY(event.point)) {
             startPoint = event.point;
-            console.log(cp.history);
+            
           }
 				}
 
@@ -108,6 +201,7 @@
           if (point.x > x && point.x < (x+length) && point.y < y && point.y > (y - width)) {
             return true;
           } else {
+            console.log('false');
             return false;
           }
         }
@@ -120,11 +214,21 @@
 			// you may replace everything
 			function myCustomInteraction() {
 				var tool = new paper.Tool();
+        
+        
 
 				tool.onMouseDown = function (event) {
 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
+
+
+            console.log("hit");
+            console.log(hit);
 				    if (hit) {
-				        hit.item.fillColor = cp.history[cp.history.length - 1];
+                console.log(colorsPicked);
+
+                var randColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+
+				        hit.item.fillColor = randColor;
 				    }
 				}
 			}
@@ -173,6 +277,197 @@
 					
 				}); 
 			}
+      
+      //CREATE COLOR WHEEL IMAGE
+      var pickerCanvas = document.getElementById('picker');
+      var pickerCTX = pickerCanvas.getContext('2d');
+
+      var pickerImage = new Image();
+      pickerImage.onload = function () {
+          pickerCTX.drawImage(pickerImage, 20, 20, 200, 200); 
+      }
+
+      pickerImage.src = '/static/coloring/images/colorwheel.png';
+      
+      //HIDE BUTTONS
+      $('#done-icon').hide();
+      $('#info-edit').hide();
+
+      
+      var isAdding = false;
+      $('#shadow-box').hide();
+      
+//       $('#shadow-box').on("click", function(e) {
+//         if (e.pageY > 360) {
+//           $('#shadow-box').hide();
+//           isAdding = false;
+//         }
+//       })
+      
+      
+      function displayEditInstructions(colorsPicked) {
+        if (colorsPicked.length == 0) {
+          $('#no-colors').show();
+        } else {
+          $('#no-colors').hide();
+        }
+      }
+      
+      
+      
+      //WHEN EDIT BUTTON IS CLICKED
+      $('#edit-icon').on("click", function() {
+        
+        $('#no-colors').hide();
+        $('#edit-icon').hide();
+        $('#done-icon').show();
+        $('.delete').show();
+        $('#info-edit').show();
+        $('#want-text').css('color','#fff')
+
+
+        $('#shadow-box').show();
+        
+
+          isAdding = true;
+          
+          //DETERMINE WHAT COLORS ARE PICKED
+          $(function(){
+
+            var possibleColor =['254.254.48',
+                '250.190.0',
+                '251.154.0',
+                '253.82.2',
+                '254.35.10',
+                '168.18.73',
+                '135.0.177',
+                '59.0.165',
+                '0.69.254',
+                '0.147.207',
+                '102.178.47',
+                '209.235.39'];
+
+            //got help from https://dzone.com/articles/creating-your-own-html5?fbclid=IwAR1T7DdJ3BDpROB3-KNqg0k4vLJj7XHLZvf3AOvmvSmDNMc9mVjCmrM2ofQ
+            $('#picker').on("click", function(e) { 
+              var canvasOffset = $(pickerCanvas).offset();
+              var canvasX = Math.floor(e.pageX - canvasOffset.left);
+              var canvasY = Math.floor(e.pageY - canvasOffset.top);
+
+
+              var imageData = pickerCTX.getImageData(canvasX, canvasY, 1, 1);
+              var pixel = imageData.data;
+
+              var r = pixel[0].toString();
+              var g = pixel[1].toString();
+              var b = pixel[2].toString();
+              var rgb = "rgb(" + r + ", " + g + ", " + b +");"
+              var rgbCheck = r + '.' + g + '.' + b;
+              var dColor = pixel[2] + 256 * pixel[1] + 65536 * pixel[0];
+              var hexColor = '#' + ('0000' + dColor.toString(16)).substr(-6);
+              
+              //MAKE SURE AVAILABLE COLOR IS PICKED AND COLOR HAS NOT ALREADY BEEN PICKED
+              if (jQuery.inArray(hexColor, colorsPicked) == -1 && jQuery.inArray(rgbCheck, possibleColor) != -1 && isAdding == true) {
+                $('.colors-picked').append('<div class="color-circle" style="text-align: center; background-color:' + hexColor + '"><span class="delete">&#x2715;<span></div>');
+                colorsPicked.push(hexColor)
+                                
+              }
+              
+              $('.delete').on("click", function() {
+
+                var remColor = $(this).parent().css("background-color")
+                if (typeof remColor !== "undefined") {
+
+                  var remRGB = remColor.split( ',' ) ;
+                  var r = parseInt(remRGB[0].substring(4)); 
+                  var g = parseInt(remRGB[1]);
+                  var b = parseInt(remRGB[2]); 
+
+                  var dRGB = b + 256 * g + 65536 * r;
+                  var remHex = '#' + ('0000' + dColor.toString(16)).substr(-6);
+
+                  //remove color from array
+                
+                  //console.log("before")
+                  //console.log(colorsPicked)
+                  colorsPicked = jQuery.grep(colorsPicked, function(value) {
+                    return value != remHex.toString();
+                  });
+//                   console.log("after")
+//                   console.log(colorsPicked);
+                  $(this).parent().remove()
+                  $(this).remove()
+                
+                }
+              })
+
+            });
+          });
+          
+          $('#done-icon').on("click", function() {
+            isAdding = false;
+            $('#done-icon').hide()
+            $('#edit-icon').show()
+            $('#shadow-box').hide()
+            $('.delete').hide();
+            $('#info-edit').hide();
+            $('#want-text').css('color','#2d2d2d')
+            displayEditInstructions(colorsPicked)
+          })
+
+
+      })
+      
+//       //AUTOFILLING HOPEFULLY THIS WORKS AH
+//       $('#autofill-btn').click(function() {
+//         var notColoredSpaces = paper.project.getItems({ // gives an []
+//           // this method give the null items that are being CLICKED
+//           // get all spaces that are not colored so far
+//           color: null,
+//         })
+//         console.log("length of array = " + notColoredSpaces.length);
+//         for (var i = 0;  i < notColoredSpaces.length; i++){
+//           //notColoredSpaces[i].fillColor = "#000000";
+//           notColoredSpaces[i].fillColor = colorsPicked[Math.random()];
+// //           console.log(notColoredSpaces[i]);
+//         }
+//       })
+      
+      
+      //AUTOFILLING TRYING PT 2
+      $('#autofill-btn').click(function() {
+        var notColoredSpaces = mandala.item
+//         console.log(notColoredSpaces);
+
+//         console.log(notColoredSpaces.children[0]);
+        //notColoredSpaces.children[0].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+        //console.log("length of array = " + notColoredSpaces.length);
+        for (i = 0;  i < notColoredSpaces.children.length; i++){
+          //notColoredSpaces[i].fillColor = "#000000";
+          
+//           console.log(notColoredSpaces.children[i].fillColor);
+//           notColoredSpaces.children[i].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+          var currArea = notColoredSpaces.children[i];
+          
+          if (currArea.Color == null){
+            currArea.fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+          }
+        }
+      })
+      
+//             //AUTOFILLING TRYING PT 3
+//       $('#autofill-btn').click(function() {
+//         var wholeSpace = mandala.item;
+        
+//          var notColoredSpaces = wholeSpace.getItems({
+//           fillColor: null,
+//         })
+        
+//         for (i = 0;  i < 242; i++){
+//           notColoredSpaces[i].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+//         }
+//       })
+      
+      
 
 			// To see your myGradientInteraction version visit: 
 			// http://<your url>:8000/coloring/?type=gradient
@@ -184,12 +479,127 @@
 			} else {
 				init(true);
 			}
-		}
+      
+      
+//       $('#appTabs a[href="#paint"]').on('click', function(e){
+//         e.preventDefault();
+//         $(this).tab('show')
+//       })
+
+//       $('#appTabs a[href="#autofill"]').on('click', function(e){
+//         e.preventDefault();
+//         $(this).tab('show')
+//       })
+
+//       $('#appTabs a:first').tab('show');
+ 		}
+    
+
 	</script>
 </head>
-<body>	
+<body>
+  
+  <div class="container-fluid" style="height:100%; padding-right:0;">
+    <div class="row" style="height:100%;">
+      
+      <!-------------CANVAS IMAGE SIDE ------------->
+      <div class="col-sm-9" >
+        <div id="image-side" style="padding-top: 100px; padding-left: 10px;">
+          <canvas id="myCanvas" width="750px" height="750px"></canvas>
+        </div>
+      </div>
+      
+      <!-------------TOOL BAR SIDE ------------->
+      <div class="col-sm-3 text-center" style="padding-right:0;">
+        
+      <!-------------NAV TABS------------->
+        <div id="buffer" style="height:10px;"></div>
+          <ul class="nav nav-tabs" id="appTabs" role="tablist">
+              <!----- PAINT TAB ------>
+              <li class="nav-item">
+                <a class="nav-link" id="nav-paint" data-toggle="tab" 
+                   href="#paint" role="tab" aria-controls="paint" aria-selected="false" 
+                   style="color: #000; background-color:#d8d8d8">PAINT</a>
+              </li>
+              <!------- AUTOFILL TAB ----->
+              <li class="nav-item">
+                <a class="nav-link active" id="nav-autofill" data-toggle="tab" 
+                   href="#autofill" role="tab" aria-controls="autofill" aria-selected="true">AUTOFILL</a>
+              </li>
+          </ul>
+        
+        <!--------- TAB CONTENT---------->
+        <div id="shadow-box"></div>
+        <div class = "tab-content" id="nav-tabContent">
+          
+          <!--      PAINT CONTENT      -->
+          <div class = "tab-pane fade" id="paint" role="tabpanel" aria-labelledby="paint">
+            <br>
+            paint... let's test
+          </div>
+          
+          <!----------- AUTOFILL CONTENT ---------->
+          <div class = "tab-pane fade show active" role="tabpanel" aria-labelledby="autofill">
+            <br>
+              <!------------CHOOSING COLOR THINGS -------->
+              <div class="colorpicker z-high" >
+                <canvas id="picker" width="244.75" height="255"></canvas>
+              </div>
+              <div class="z-high">
+                
+                <span id="want-text" style="font-size: 24px; display: block;">
+                  Colors I Want 
+                  <img id="edit-icon" src="/static/coloring/images/edit-cirlce.png" style="height: 25px; opacity: 0.7; padding-bottom:3px;">
+                  <img id="done-icon" src="/static/coloring/images/done-icon.png" style="height: 25px; opacity: 0.7; padding-bottom:3px;">
+                </span>
+                
+                <div class="instructions" id="info-edit">
+                  <span style="font-size:12px; color: #fff;">
+                    Click a color on the color wheel above to add it to <br> your colors. To remove a color, click on the &#x2715;
+                  </span>
+                </div>
+                
+                <div class="colors-picked" >
+                </div>
+                <div class="instructions" id="no-colors">
+                  <span style="font-size:12px; width: 150px; ">
+                    You have not selected any colors for autofill to use
+                  </span>
+                </div>
+                
+                <!--
+                <div>
+                  <img id="edit-icon" src="/static/coloring/images/edit-cirlce.png" style="height: 30px; opacity: 0.7; padding-top:7px;">
+                </div>
+                
+                <div>
+                  <img id="done-icon" src="/static/coloring/images/done-icon.png" style="height: 30px; opacity: 0.7; padding-top:7px;">
+                </div>
+                -->
+            </div>
 
-	<canvas id="myCanvas" width="750px" height="750px"></canvas>
-	<div id="color-palette"></div>
+            
+            <!------AUTOFILL BUTTON----->
+            <div class="other">
+              
+              <button type="button" class="btn btn-primary" id="autofill-btn" >
+                <img src='/static/coloring/images/star-icon.png' style="height:20px; padding-right: 2px;">
+                AUTOFILL
+              </button>
+
+            <br>
+            
+            <!--------LOCKING button------->
+            <img src='/static/coloring/images/lock-icon.png' class="locking">
+            
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+	
 </body>
 </html>
