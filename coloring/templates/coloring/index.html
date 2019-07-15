@@ -6,11 +6,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   	<title>P3 Coloring</title>
 
-	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'coloring/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
-	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'coloring/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
   <link rel="stylesheet" type="text/css" href="{% static 'coloring/vendors/bootstrap/css/bootstrap.css' %}" />
-  
   <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700&display=swap" rel="stylesheet">
 
 
@@ -136,7 +135,7 @@
 			var mandala = {
 				item: null,
 				lastClicked: null,
-				filePath: '/static/coloring/images/mandala-freepik.svg'
+				filePath: '/static/coloring/images/mandala-freepik.svg',
 			};	
 
 			// color palette
@@ -213,24 +212,35 @@
 			// your custom interaction goes here!
 			// you may replace everything
 			function myCustomInteraction() {
-				var tool = new paper.Tool();
+// 				var tool = new paper.Tool();
+
+// 				tool.onMouseDown = function (event) {
+// 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
+
+
+//             console.log("hit");
+//             console.log(hit);
+// 				    if (hit) {
+//                 console.log(colorsPicked);
+
+//                 var randColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
+
+// 				        hit.item.fillColor = randColor;
+// 				    }
+// 				}
         
-        
+        var tool = new paper.Tool();
 
 				tool.onMouseDown = function (event) {
-				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
-
-
-            console.log("hit");
-            console.log(hit);
+				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
+          
 				    if (hit) {
-                console.log(colorsPicked);
-
-                var randColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
-
-				        hit.item.fillColor = randColor;
+//               $(function () {
+//                  $('[data-toggle="Hello"]').popover();
+//               })
 				    }
 				}
+        
 			}
 
 
@@ -449,6 +459,8 @@
           var currArea = notColoredSpaces.children[i];
           
           if (currArea.Color == null){
+//                       console.log(notColoredSpaces.children[i].selected);
+
             currArea.fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
           }
         }
@@ -535,7 +547,7 @@
           <!--      PAINT CONTENT      -->
           <div class = "tab-pane fade" id="paint" role="tabpanel" aria-labelledby="paint">
             <br>
-            paint... let's test
+            paint...
           </div>
           
           <!----------- AUTOFILL CONTENT ---------->
@@ -546,7 +558,7 @@
                 <canvas id="picker" width="244.75" height="255"></canvas>
               </div>
               <div class="z-high">
-                
+              <!--         *** make this as scroller         -->
                 <span id="want-text" style="font-size: 24px; display: block;">
                   Colors I Want 
                   <img id="edit-icon" src="/static/coloring/images/edit-cirlce.png" style="height: 25px; opacity: 0.7; padding-bottom:3px;">
