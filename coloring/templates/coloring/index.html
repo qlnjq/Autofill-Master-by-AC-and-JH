@@ -395,6 +395,7 @@
 				        hit.item.fillColor = currColor;
               
                 hit.item.lock = true;
+                  
 				        } else {
 //                 console.log("we got here");
                 $("#myCanvas").click(function(event) {
@@ -405,12 +406,13 @@
                         "display": "flex",
                         "flex-wrap": "wrap"
                     })
+                    //hit.item.fillColor = currColor;
                   
                     $('.popUpClassColor').on("click", function() {
                     var areaColor = $(this).css("background-color");
                     if (typeof areaColor !== "undefined")
                         console.log(hit.item);
-                        hit.item.fillColor = currColor;
+                        hit.item.fillColor = areaColor;
                     })
                     
                     
