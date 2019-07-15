@@ -7,10 +7,15 @@
   	<title>P3 Coloring</title>
 
   <script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'coloring/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'coloring/vendors/jquery-ui/jquery-ui.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
-  <link rel="stylesheet" type="text/css" href="{% static 'coloring/vendors/bootstrap/css/bootstrap.css' %}" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--   <link rel="stylesheet" type="text/css" href="{% static 'coloring/vendors/bootstrap/css/bootstrap.css' %}" /> -->
   <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 
 	<style type="text/css">
@@ -80,14 +85,23 @@
       font-size: 24px;
       position: absolute;
       left: 27%;
-      top: 60%;
+      top: 70%;
     }
+    
+    .lock-btn {
+      margin-right:4px;
+      margin-left: 10px;
+      margin-bottom: 2px;
+      height: 15px;
+    }
+    
+
     
     .locking {
       vertical-align: middle;
       position: absolute;
-      left: 47%;
-      top: 70%;
+      left: 35%;
+      top: 80%;
       height: 50px;
     }
     
@@ -102,6 +116,39 @@
     
     .instructions {
       opacity: 0.5;
+    }
+    
+    .nav-tabs .nav-item {
+      margin-bottom: -1px;
+      width: 50%;
+
+    }
+    
+    .nav-tabs .nav-link {
+      border: 1px solid transparent;
+      border-top-left-radius: 0.50rem;
+      border-top-right-radius: 0.50rem;
+      font-size: 24px;
+      vertical-align: middle;
+      font-weight: 400;
+
+    }
+    
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link {
+      color: #000;
+      background-color: #efefef;
+      box-shadow: -7px 0px 3px -3px #909090;
+    }
+    
+    .message {
+      display: none;
+      position: absolute;
+      text-align: center;
+/*       color: white; */
+      background: white;
+      border: 5px solid black;
+      border-radius: 10px;
     }
    
     /*#color-palette {
@@ -212,11 +259,10 @@
 			// your custom interaction goes here!
 			// you may replace everything
 			function myCustomInteraction() {
+         /// color changes randomly on selected area
 // 				var tool = new paper.Tool();
-
 // 				tool.onMouseDown = function (event) {
 // 				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true });
-
 
 //             console.log("hit");
 //             console.log(hit);
@@ -228,20 +274,49 @@
 // 				        hit.item.fillColor = randColor;
 // 				    }
 // 				}
+
+        
+        /// click area pop-up box
+        
+//         var tool = new paper.Tool();
+// 				tool.onMouseDown = function (event) {
+//         var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
+          
+//           if (hit){
+//             let rec = new paper.Path();
+//             let length = 40;
+//             let width = 28;
+//             let x = event.point.x;
+//             let y = event.point.y;
+
+//             rec.add(new paper.Point(x,y));
+//             rec.add(new paper.Point(x + length,y));
+
+//             rec.add(new paper.Point(x + length,y - width));
+//             rec.add(new paper.Point(x,y - width));
+
+//             rec.closed = true;
+
+//             rec.fillColor = 'white';
+//             rec.strokeColor = 'black';
+//           }
+// 			  }
         
         var tool = new paper.Tool();
-
 				tool.onMouseDown = function (event) {
-				    var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
-          
-				    if (hit) {
-//               $(function () {
-//                  $('[data-toggle="Hello"]').popover();
-//               })
-				    }
-				}
-        
-			}
+        var hit = mandala.item.hitTest(event.point, { tolerance: 10, fill: true }); // area of where is clicked
+          if (hit){
+              $(function() {
+                $("#myCanvas").click(function(evt) {
+                  $(".message").css({
+                    top: evt.pageY + 5,
+                    left: evt.pageX + 5
+                  }).show();
+                });
+              });
+        }
+      }
+      }
 
 
 			// create a color palette with the given colors
@@ -323,7 +398,19 @@
         }
       }
       
+      $('#unlock-select').hide();
       
+      $('#lock-select').on("click", function() {
+        $('#lock-select').hide();
+        $('#unlock-select').show();
+      })
+    
+      $('#unlock-select').on("click", function() {
+        $('#unlock-select').hide();
+        $('#lock-select').show();
+      })
+    
+    
       
       //WHEN EDIT BUTTON IS CLICKED
       $('#edit-icon').on("click", function() {
@@ -446,7 +533,8 @@
       //AUTOFILLING TRYING PT 2
       $('#autofill-btn').click(function() {
         var notColoredSpaces = mandala.item
-//         console.log(notColoredSpaces);
+
+         console.log(notColoredSpaces.children[0]);
 
 //         console.log(notColoredSpaces.children[0]);
         //notColoredSpaces.children[0].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
@@ -458,9 +546,8 @@
 //           notColoredSpaces.children[i].fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
           var currArea = notColoredSpaces.children[i];
           
-          if (currArea.Color == null){
-//                       console.log(notColoredSpaces.children[i].selected);
-
+          if (currArea.fillColor._canvasStyle == 'rgb(255,255,255)'){
+//                       console.log(currArea.fillColor._canvasStyle);
             currArea.fillColor = colorsPicked[Math.floor(Math.random()*colorsPicked.length)];
           }
         }
@@ -504,7 +591,7 @@
 //       })
 
 //       $('#appTabs a:first').tab('show');
- 		}
+ 		} 
     
 
 	</script>
@@ -518,6 +605,7 @@
       <div class="col-sm-9" >
         <div id="image-side" style="padding-top: 100px; padding-left: 10px;">
           <canvas id="myCanvas" width="750px" height="750px"></canvas>
+          <div class="message">a message for you</div>
         </div>
       </div>
       
@@ -561,8 +649,10 @@
               <!--         *** make this as scroller         -->
                 <span id="want-text" style="font-size: 24px; display: block;">
                   Colors I Want 
+
                   <img id="edit-icon" src="/static/coloring/images/edit-cirlce.png" style="height: 25px; opacity: 0.7; padding-bottom:3px;">
                   <img id="done-icon" src="/static/coloring/images/done-icon.png" style="height: 25px; opacity: 0.7; padding-bottom:3px;">
+
                 </span>
                 
                 <div class="instructions" id="info-edit">
@@ -588,6 +678,7 @@
                   <img id="done-icon" src="/static/coloring/images/done-icon.png" style="height: 30px; opacity: 0.7; padding-top:7px;">
                 </div>
                 -->
+
             </div>
 
             
@@ -602,7 +693,15 @@
             <br>
             
             <!--------LOCKING button------->
-            <img src='/static/coloring/images/lock-icon.png' class="locking">
+              <div class="locking">
+                <img class="lock-btn" id="lock-select" src='/static/coloring/images/lock-select.png' style="height:60px; margin-left:3px; margin-bottom:50px;">
+                <img class="lock-btn" id="unlock-select" src='/static/coloring/images/unlock-select.png' style="height:60px; margin-left:3px; margin-bottom:50px;">
+                 
+                <img src='/static/coloring/images/info-icon.png' style="height:15px; margin-left:0px; margin-bottom:100px;">
+           
+                  
+              </div>
+            
             
             </div>
 
